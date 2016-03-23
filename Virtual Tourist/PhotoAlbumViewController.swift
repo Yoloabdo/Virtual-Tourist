@@ -123,35 +123,35 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, NSFetchedRe
         
         newCollectionButton.hidden = true
         
-//        if isDeleting == true {
-//            
-//            for indexPath in selectedIndexOfCollectionViewCells {
-//                
-//                let photo = fetchedResultsController.objectAtIndexPath(indexPath) as! Photos
-//                print("Deleting this - \(photo)")
-//                
-//                sharedContext.deleteObject(photo)
-//            }
-//            
-//            selectedIndexOfCollectionViewCells.removeAll()
-//            
-//            CoreDataStackManager.sharedInstacne().saveContext()
-//            
-//            reFetch()
-//            
-//            collectionView.reloadData()
-//            
-//            newCollectionButton.setTitle("New Collection", forState: UIControlState.Normal)
-//            newCollectionButton.hidden = false
-//            
-//            isDeleting = false
-//        } else {
-        
-//            for photo in fetchedResultsController.fetchedObjects as! [Photos] {
-//                sharedContext.deleteObject(photo)
-//            }
+        if isDeleting == true {
             
-//            CoreDataStackManager.sharedInstacne().saveContext()
+            for indexPath in selectedIndexOfCollectionViewCells {
+                
+                let photo = fetchedResultsController.objectAtIndexPath(indexPath) as! Photos
+                print("Deleting this - \(photo)")
+                
+                sharedContext.deleteObject(photo)
+            }
+            
+            selectedIndexOfCollectionViewCells.removeAll()
+            
+            CoreDataStackManager.sharedInstacne().saveContext()
+            
+            reFetch()
+            
+            collectionView.reloadData()
+            
+            newCollectionButton.setTitle("New Collection", forState: UIControlState.Normal)
+            newCollectionButton.hidden = false
+            
+            isDeleting = false
+        } else {
+        
+            for photo in fetchedResultsController.fetchedObjects as! [Photos] {
+                sharedContext.deleteObject(photo)
+            }
+            
+            CoreDataStackManager.sharedInstacne().saveContext()
             
             FlickrClient.sharedInstance().downloadPhotosForPin(pin!, completionHandler: { (success, error) -> Void in
                 
@@ -176,7 +176,7 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, NSFetchedRe
 
                 })
             })
-        
+        }
     }
     
     @IBAction func editCollection(sender: UIBarButtonItem) {
