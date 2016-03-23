@@ -39,7 +39,7 @@ class LocationMapViewController: UIViewController, MKMapViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let longPressRecogniser = UILongPressGestureRecognizer(target: self, action: "handLongPress:")
+        let longPressRecogniser = UILongPressGestureRecognizer(target: self, action: #selector(handLongPress))
         
         longPressRecogniser.minimumPressDuration = 1.0
         mapView.addGestureRecognizer(longPressRecogniser)

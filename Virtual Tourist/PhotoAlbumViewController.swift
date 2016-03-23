@@ -77,8 +77,6 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, NSFetchedRe
         reFetch()
         
         fetchedResultsController.delegate = self
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "photoReload", name: "downloadPhotoImage.done", object: nil)
     }
     
     // Inserting dispatch_async to ensure the closure always run in the main thread
@@ -105,6 +103,8 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, NSFetchedRe
         } catch let error as NSError {
             print("reFetch - \(error)")
         }
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(photoReload), name: "downloadPhotoImage.done", object: nil)
+
     }
     
     func loadMapView() {
@@ -123,35 +123,35 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, NSFetchedRe
         
         newCollectionButton.hidden = true
         
-        if isDeleting == true {
+//        if isDeleting == true {
+//            
+//            for indexPath in selectedIndexOfCollectionViewCells {
+//                
+//                let photo = fetchedResultsController.objectAtIndexPath(indexPath) as! Photos
+//                print("Deleting this - \(photo)")
+//                
+//                sharedContext.deleteObject(photo)
+//            }
+//            
+//            selectedIndexOfCollectionViewCells.removeAll()
+//            
+//            CoreDataStackManager.sharedInstacne().saveContext()
+//            
+//            reFetch()
+//            
+//            collectionView.reloadData()
+//            
+//            newCollectionButton.setTitle("New Collection", forState: UIControlState.Normal)
+//            newCollectionButton.hidden = false
+//            
+//            isDeleting = false
+//        } else {
+        
+//            for photo in fetchedResultsController.fetchedObjects as! [Photos] {
+//                sharedContext.deleteObject(photo)
+//            }
             
-            for indexPath in selectedIndexOfCollectionViewCells {
-                
-                let photo = fetchedResultsController.objectAtIndexPath(indexPath) as! Photos
-                print("Deleting this - \(photo)")
-                
-                sharedContext.deleteObject(photo)
-            }
-            
-            selectedIndexOfCollectionViewCells.removeAll()
-            
-            CoreDataStackManager.sharedInstacne().saveContext()
-            
-            reFetch()
-            
-            collectionView.reloadData()
-            
-            newCollectionButton.setTitle("New Collection", forState: UIControlState.Normal)
-            newCollectionButton.hidden = false
-            
-            isDeleting = false
-        } else {
-            
-            for photo in fetchedResultsController.fetchedObjects as! [Photos] {
-                sharedContext.deleteObject(photo)
-            }
-            
-            CoreDataStackManager.sharedInstacne().saveContext()
+//            CoreDataStackManager.sharedInstacne().saveContext()
             
             FlickrClient.sharedInstance().downloadPhotosForPin(pin!, completionHandler: { (success, error) -> Void in
                 
@@ -159,6 +159,8 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, NSFetchedRe
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     
                         CoreDataStackManager.sharedInstacne().saveContext()
+                        print("saved to CoreData")
+                        
                     })
                 } else {
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -168,11 +170,13 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, NSFetchedRe
                 }
                 
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    print("refetching")
                     self.reFetch()
                     self.collectionView.reloadData()
+
                 })
             })
-        }
+        
     }
     
     @IBAction func editCollection(sender: UIBarButtonItem) {
@@ -248,7 +252,7 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, NSFetchedRe
         cell.deleteButton.hidden = true
         cell.deleteButton.layer.setValue(indexPath, forKey: "indexPath")
         
-        cell.deleteButton.addTarget(self, action: "deletePhoto", forControlEvents: .TouchUpInside)
+        cell.deleteButton.addTarget(self, action: #selector(deletePhoto), forControlEvents: .TouchUpInside)
         
         return cell
     }

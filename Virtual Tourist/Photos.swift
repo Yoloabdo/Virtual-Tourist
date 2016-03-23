@@ -43,7 +43,7 @@ class Photos: NSManagedObject {
         self.url = photoURL
         self.pin = pin
         
-        print("init from photos.swift \(url)")
+//        print("init from photos.swift \(url)")
     }
     
     override func prepareForDeletion() {
